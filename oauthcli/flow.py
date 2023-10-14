@@ -50,6 +50,9 @@ class AuthFlow:
     def process_url(self, api: str) -> str:
         return api
 
+    def request(self, method: str, api: str, **kwargs):
+        return self.session.request(method, self.process_url(api), **kwargs)
+
     def get(self, api: str, **kwargs):
         return self.session.get(self.process_url(api), **kwargs)
 
@@ -58,6 +61,9 @@ class AuthFlow:
 
     def put(self, api: str, **kwargs):
         return self.session.put(self.process_url(api), **kwargs)
+
+    def patch(self, api: str, **kwargs):
+        return self.session.patch(self.process_url(api), **kwargs)
 
     def delete(self, api: str, **kwargs):
         return self.session.delete(self.process_url(api), **kwargs)
