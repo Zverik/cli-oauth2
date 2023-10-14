@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "cli-oauth2"
-version = "0.1.2"
+version = "0.1.5"
 authors = [
   { name="Ilya Zverev", email="ilya@zverev.info" },
 ]
@@ -29,3 +29,6 @@ classifiers = [
 [project.urls]
 "Homepage" = "https://github.com/Zverik/cli-oauth2"
 "Bug Tracker" = "https://github.com/Zverik/cli-oauth2/issues"
+
+[project.scripts]
+oauthclean = "oauthcli.clean:main"

@@ -1,5 +1,20 @@
 # Change Log
 
+## 0.1.5 (2022-10-14)
+
+* `force` parameter to `auth_*` functions.
+* Command-line script `oauthclean` for removing stored tokens.
+
+## 0.1.4 (2022-10-14)
+
+* Different apps use different keys for the same providers.
+
+(Oh the joys of testing in production!)
+
+## 0.1.3 (2022-10-14)
+
+* Moved sources to the `src` directory.
+
 ## 0.1.2 (2022-10-14)
 
 * Added `AuthFlow.request()` method.

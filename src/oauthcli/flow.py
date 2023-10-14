@@ -75,15 +75,19 @@ class AuthFlow:
         return self.session.options(self.process_url(api), **kwargs)
 
     def _load_token(self):
+        if not self.session.client_id:
+            return
+        token_key = f'{self.provider_id}/{self.session.client_id}'
         config_dir = platformdirs.user_config_dir('PythonCliAuth', ensure_exists=True)
         filename = os.path.join(config_dir, 'tokens.json')
         if os.path.exists(filename):
             with open(filename, 'r') as f:
                 tokens = json.load(f)
-                if self.provider_id in tokens:
-                    self.session.token = tokens[self.provider_id]
+                if token_key in tokens:
+                    self.session.token = tokens[token_key]
 
     def _save_token(self, token: Optional[dict]):
+        token_key = f'{self.provider_id}/{self.session.client_id}'
         config_dir = platformdirs.user_config_dir('PythonCliAuth', ensure_exists=True)
         filename = os.path.join(config_dir, 'tokens.json')
         tokens = {}
@@ -95,10 +99,10 @@ class AuthFlow:
             pass
 
         if not token:
-            if self.provider_id in tokens:
-                del tokens[self.provider_id]
+            if token_key in tokens:
+                del tokens[token_key]
         else:
-            tokens[self.provider_id] = token
+            tokens[token_key] = token
 
         try:
             with open(filename, 'w') as f:
@@ -149,12 +153,13 @@ class AuthFlow:
         open_browser=True,
         code_message=_DEFAULT_AUTH_CODE_MESSAGE,
         token_audience=None,
+        force: bool = False,
         **kwargs
     ):
         """Runs auth flow without starting a web server.
         Note that you must have 'urn:ietf:wg:oauth:2.0:oob' for
         the redirect URL in the provider app settings."""
-        if self.authorized:
+        if self.authorized and not force:
             return self
 
         self.session.redirect_uri = 'urn:ietf:wg:oauth:2.0:oob'
@@ -202,6 +207,7 @@ class AuthFlow:
         redirect_uri_trailing_slash: bool = True,
         timeout_seconds: Optional[int] = None,
         token_audience: Optional[str] = None,
+        force: bool = False,
         **kwargs
     ):
         """Run the flow using the server strategy.
@@ -240,6 +246,7 @@ class AuthFlow:
             token_audience (str): Passed along with the request for an access
                 token. Determines the endpoints with which the token can be
                 used. Optional.
+            force (bool): Set to True to authorize even when already have a token.
             kwargs: Additional keyword arguments passed through to
                 :meth:`authorization_url`.
 
@@ -247,7 +254,7 @@ class AuthFlow:
             google.oauth2.credentials.Credentials: The OAuth 2.0 credentials
                 for the user.
         """
-        if self.authorized:
+        if self.authorized and not force:
             return self
 
         if isinstance(port, list):
