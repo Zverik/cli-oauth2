@@ -1,0 +1,6 @@
+__pycache__/
+.venv/
+dist/
+*.egg-info/
+osm_test.py
+*.swp
