@@ -1,6 +1,6 @@
 # Change Log
 
-## 0.1.5 (2022-10-14)
+## 0.2.0 (2022-10-14)
 
 * `force` parameter to `auth_*` functions.
 * Command-line script `oauthclean` for removing stored tokens.
