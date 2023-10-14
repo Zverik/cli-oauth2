@@ -15,7 +15,10 @@ Do something like this:
 ```python
 from oauthcli import OpenStreetMapDevAuth
 
-auth = OpenStreetMapAuth(client_id, secret_id).auth_server()
+auth = OpenStreetMapAuth(
+    client_id, secret_id, ['read_prefs']
+).auth_server(token_test=lambda r: r.get('user/details'))
+
 data = auth.get('user/details.json')
 if data.status_code != 200:
     print(f'Error {data.status_code}: {data.text})')
@@ -54,6 +57,11 @@ If you need to use another provider, just subclass `AuthFlow` and
 pass it `provider_id` (the key for the stored token map),
 `OAuth2Session(client_id, scope=scopes)`,
 `auth_url`, `token_url`, and `client_secret`.
+
+## Cleanup
+
+The tool stores tokens in a json in the configuration directory.
+To clean some or all tokens, use the `oauthclean` command-line tool.
 
 ## Author and License
 

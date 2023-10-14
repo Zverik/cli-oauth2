@@ -15,7 +15,7 @@ import wsgiref.util
 import os.path
 from base64 import urlsafe_b64encode
 from requests_oauthlib import OAuth2Session
-from typing import Optional, Union
+from typing import Optional, Union, Callable
 
 
 class AuthFlow:
@@ -147,6 +147,19 @@ class AuthFlow:
         "The authentication flow has completed. You may close this window."
     )
 
+    def _check_auth(self, force: bool, token_test: Optional[Callable] = None) -> bool:
+        if not self.authorized or force:
+            return False
+        ok = True
+        if token_test is not None:
+            try:
+                resp = token_test(self)
+                if resp.status_code % 100 == 4:
+                    ok = False
+            except:  # noqa: E722
+                ok = False
+        return ok
+
     def auth_code(
         self,
         authorization_prompt_message=_DEFAULT_AUTH_PROMPT_MESSAGE,
@@ -154,12 +167,13 @@ class AuthFlow:
         code_message=_DEFAULT_AUTH_CODE_MESSAGE,
         token_audience=None,
         force: bool = False,
+        token_test: Optional[Callable] = None,
         **kwargs
     ):
         """Runs auth flow without starting a web server.
         Note that you must have 'urn:ietf:wg:oauth:2.0:oob' for
         the redirect URL in the provider app settings."""
-        if self.authorized and not force:
+        if self._check_auth(force, token_test):
             return self
 
         self.session.redirect_uri = 'urn:ietf:wg:oauth:2.0:oob'
@@ -208,6 +222,7 @@ class AuthFlow:
         timeout_seconds: Optional[int] = None,
         token_audience: Optional[str] = None,
         force: bool = False,
+        token_test: Optional[Callable] = None,
         **kwargs
     ):
         """Run the flow using the server strategy.
@@ -247,6 +262,8 @@ class AuthFlow:
                 token. Determines the endpoints with which the token can be
                 used. Optional.
             force (bool): Set to True to authorize even when already have a token.
+            token_test (Callable): Function that receives this object for a param,
+                makes a call, and returns the response.
             kwargs: Additional keyword arguments passed through to
                 :meth:`authorization_url`.
 
@@ -254,7 +271,7 @@ class AuthFlow:
             google.oauth2.credentials.Credentials: The OAuth 2.0 credentials
                 for the user.
         """
-        if self.authorized and not force:
+        if self._check_auth(force, token_test):
             return self
 
         if isinstance(port, list):

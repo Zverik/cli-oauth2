@@ -1,5 +1,11 @@
 # Change Log
 
+## 0.3.0 (2022-10-14)
+
+* Endpoints for OSM API were all wrong.
+* Removed all defaults for the scope.
+* Added `token_test` parameters to query an API for authentication test.
+
 ## 0.2.0 (2022-10-14)
 
 * `force` parameter to `auth_*` functions.

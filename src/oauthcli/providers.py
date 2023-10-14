@@ -8,9 +8,9 @@ class OpenStreetMapAuth(AuthFlow):
         self,
         client_id: str,
         client_secret: str,
-        scopes: Sequence[str] = ['read_prefs'],
+        scopes: Sequence[str],
         provider_id: str = 'openstreetmap',
-        url: str = 'https://api06.dev.openstreetmap.org',
+        url: str = 'https://www.openstreetmap.org',
     ):
         super().__init__(
             provider_id,
@@ -31,7 +31,7 @@ class OpenStreetMapDevAuth(OpenStreetMapAuth):
         self,
         client_id: str,
         client_secret: str,
-        scopes: Sequence[str] = ['read_prefs'],
+        scopes: Sequence[str],
     ):
         super().__init__(
             client_id, client_secret, scopes,
@@ -45,7 +45,7 @@ class GoogleAuth(AuthFlow):
         self,
         client_id: str,
         client_secret: str,
-        scopes: Sequence[str]
+        scopes: Sequence[str],
     ):
         super().__init__(
             'google',
@@ -136,7 +136,7 @@ class LinkedInAuth(AuthFlow):
         self,
         client_id: str,
         client_secret: str,
-        scopes: Sequence[str] = ['profile'],
+        scopes: Sequence[str],
     ):
         super().__init__(
             'linkedin',
