@@ -4,13 +4,19 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "cli-oauth2"
-version = "0.1.0"
+version = "0.1.1"
 authors = [
   { name="Ilya Zverev", email="ilya@zverev.info" },
 ]
 description = "Helper library for OAuth2 in command-line tools"
+keywords = ["oauth", "oauth2", "cli", "command line"]
 readme = "README.md"
-requires-python = ">=3.7"
+license = {file = "LICENSE"}
+requires-python = ">=3.9"
+dependencies = [
+    "requests-oauthlib",
+    "platformdirs",
+]
 classifiers = [
     "Programming Language :: Python :: 3",
     "Development Status :: 4 - Beta",

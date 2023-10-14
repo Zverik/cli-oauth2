@@ -4,6 +4,10 @@ This Python library help command-line tool authors to use
 OAuth2 services. Built using [requests-oauthlib](https://requests-oauthlib.readthedocs.io/)
 with parts of [google\_auth\_oauthlib](https://github.com/googleapis/google-auth-library-python-oauthlib).
 
+## Installation
+
+    pip install cli-oauth2
+
 ## Usage
 
 Do something like this:
