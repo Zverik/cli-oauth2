@@ -13,7 +13,7 @@ with parts of [google\_auth\_oauthlib](https://github.com/googleapis/google-auth
 Do something like this:
 
 ```python
-from oauthcli import OpenStreetMapDevAuth
+from oauthcli import OpenStreetMapAuth
 
 auth = OpenStreetMapAuth(
     client_id, secret_id, ['read_prefs']

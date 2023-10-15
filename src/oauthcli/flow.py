@@ -13,6 +13,7 @@ import string
 import wsgiref.simple_server
 import wsgiref.util
 import os.path
+import sys
 from base64 import urlsafe_b64encode
 from requests_oauthlib import OAuth2Session
 from typing import Optional, Union, Callable
@@ -180,11 +181,10 @@ class AuthFlow:
         auth_url, _ = self.authorization_url(**kwargs)
 
         if open_browser:
-            # if browser is None it defaults to default browser
             webbrowser.open(auth_url, new=2, autoraise=True)
 
         if authorization_prompt_message:
-            print(authorization_prompt_message.format(url=auth_url))
+            print(authorization_prompt_message.format(url=auth_url), file=sys.stderr)
 
         while True:
             auth_code = input(code_message).strip()
@@ -294,11 +294,10 @@ class AuthFlow:
         auth_url, _ = self.authorization_url(**kwargs)
 
         if open_browser:
-            # if browser is None it defaults to default browser
             webbrowser.open(auth_url, new=2, autoraise=True)
 
         if authorization_prompt_message:
-            print(authorization_prompt_message.format(url=auth_url))
+            print(authorization_prompt_message.format(url=auth_url), file=sys.stderr)
 
         local_server.timeout = timeout_seconds
         local_server.handle_request()
