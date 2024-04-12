@@ -75,6 +75,25 @@ class GitHubAuth(AuthFlow):
         return f'https://api.github.com/{api.lstrip("/")}'
 
 
+class GitlabAuth(AuthFlow):
+    def __init__(
+        self,
+        client_id: str,
+        client_secret: str,
+        scopes: Optional[Sequence[str]] = None,
+        provider_id: str = 'gitlab',
+        url: str = 'https://gitlab.com',
+    ):
+        super().__init__(
+            provider_id,
+            OAuth2Session(client_id, scope=scopes),
+            f'{url.rstrip("/")}/oauth/authorize',
+            f'{url.rstrip("/")}/oauth/token',
+            client_secret,
+        )
+        self.url = url.rstrip("/")
+
+
 class MastodonAuth(AuthFlow):
     def __init__(
         self,
