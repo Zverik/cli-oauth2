@@ -169,6 +169,7 @@ class AuthFlow:
         token_audience=None,
         force: bool = False,
         token_test: Optional[Callable] = None,
+        redirect_uri: Optional[Callable] = None,
         **kwargs
     ):
         """Runs auth flow without starting a web server.
@@ -177,7 +178,7 @@ class AuthFlow:
         if self._check_auth(force, token_test):
             return self
 
-        self.session.redirect_uri = 'urn:ietf:wg:oauth:2.0:oob'
+        self.session.redirect_uri = redirect_uri if redirect_uri else 'urn:ietf:wg:oauth:2.0:oob'
         auth_url, _ = self.authorization_url(**kwargs)
 
         if open_browser:
