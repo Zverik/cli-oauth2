@@ -6,8 +6,6 @@ import contextlib
 import socket
 import hashlib
 import logging
-import platformdirs
-import json
 import webbrowser
 import string
 import wsgiref.simple_server
@@ -19,6 +17,8 @@ from base64 import urlsafe_b64encode
 from requests_oauthlib import OAuth2Session
 from typing import Optional, Union, Callable
 
+from .storage import BaseStorage, ConfigFileStorage
+
 
 class AuthFlow:
     def __init__(
@@ -28,6 +28,7 @@ class AuthFlow:
         auth_url: str,
         token_url: str,
         client_secret: Optional[str] = None,
+        tokens_storage: Optional[BaseStorage] = None,
     ):
         self.provider_id = provider_id
         self.session = session
@@ -37,6 +38,8 @@ class AuthFlow:
         self.token_url = token_url
         self.client_secret = client_secret
         self.default_local_host = 'localhost'
+        self.tokens_storage = tokens_storage if tokens_storage else ConfigFileStorage()
+        assert isinstance(self.tokens_storage, BaseStorage), "Invalid tokens storage provided"
         self._load_token()
 
     @property
@@ -77,40 +80,15 @@ class AuthFlow:
         return self.session.options(self.process_url(api), **kwargs)
 
     def _load_token(self):
-        if not self.session.client_id:
-            return
-        token_key = f'{self.provider_id}/{self.session.client_id}'
-        config_dir = platformdirs.user_config_dir('PythonCliAuth', ensure_exists=True)
-        filename = os.path.join(config_dir, 'tokens.json')
-        if os.path.exists(filename):
-            with open(filename, 'r') as f:
-                tokens = json.load(f)
-                if token_key in tokens:
-                    self.session.token = tokens[token_key]
+        if self.session.client_id:
+            token = self.tokens_storage.get_token(
+                self.provider_id, self.session.client_id
+            )
+            if token:
+                self.session.token = token
 
     def _save_token(self, token: Optional[dict]):
-        token_key = f'{self.provider_id}/{self.session.client_id}'
-        config_dir = platformdirs.user_config_dir('PythonCliAuth', ensure_exists=True)
-        filename = os.path.join(config_dir, 'tokens.json')
-        tokens = {}
-        try:
-            if os.path.exists(filename):
-                with open(filename, 'r') as f:
-                    tokens = json.load(f)
-        except IOError:
-            pass
-
-        if not token:
-            if token_key in tokens:
-                del tokens[token_key]
-        else:
-            tokens[token_key] = token
-
-        try:
-            with open(filename, 'w') as f:
-                json.dump(tokens, f)
-        except IOError:
-            logging.exception('Could not save tokens to %s', filename)
+        self.tokens_storage.set_token(self.provider_id, self.session.client_id, token)
 
     def authorization_url(self, **kwargs):
         # ↓ this is google-specific

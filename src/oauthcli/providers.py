@@ -1,4 +1,5 @@
 from .flow import AuthFlow
+from .storage import BaseStorage
 from requests_oauthlib import OAuth2Session
 from typing import Optional, Sequence
 
@@ -11,6 +12,7 @@ class OpenStreetMapAuth(AuthFlow):
         scopes: Sequence[str],
         provider_id: str = 'openstreetmap',
         url: str = 'https://www.openstreetmap.org',
+        tokens_storage: Optional[BaseStorage] = None,
     ):
         super().__init__(
             provider_id,
@@ -18,6 +20,7 @@ class OpenStreetMapAuth(AuthFlow):
             f'{url.rstrip("/")}/oauth2/authorize',
             f'{url.rstrip("/")}/oauth2/token',
             client_secret,
+            tokens_storage=tokens_storage,
         )
         self.default_local_host = '127.0.0.1'
         self.url = url.rstrip("/")
@@ -32,11 +35,13 @@ class OpenStreetMapDevAuth(OpenStreetMapAuth):
         client_id: str,
         client_secret: str,
         scopes: Sequence[str],
+        tokens_storage: Optional[BaseStorage] = None,
     ):
         super().__init__(
             client_id, client_secret, scopes,
             'openstreetmap_dev',
-            'https://api06.dev.openstreetmap.org'
+            'https://api06.dev.openstreetmap.org',
+            tokens_storage=tokens_storage,
         )
 
 
@@ -46,6 +51,7 @@ class GoogleAuth(AuthFlow):
         client_id: str,
         client_secret: str,
         scopes: Sequence[str],
+        tokens_storage: Optional[BaseStorage] = None,
     ):
         super().__init__(
             'google',
@@ -53,6 +59,7 @@ class GoogleAuth(AuthFlow):
             'https://accounts.google.com/o/oauth2/auth',
             'https://oauth2.googleapis.com/token',
             client_secret,
+            tokens_storage=tokens_storage,
         )
 
 
@@ -62,6 +69,7 @@ class GitHubAuth(AuthFlow):
         client_id: str,
         client_secret: str,
         scopes: Optional[Sequence[str]] = None,
+        tokens_storage: Optional[BaseStorage] = None,
     ):
         super().__init__(
             'github',
@@ -69,6 +77,7 @@ class GitHubAuth(AuthFlow):
             'https://github.com/login/oauth/authorize',
             'https://github.com/login/oauth/access_token',
             client_secret,
+            tokens_storage=tokens_storage,
         )
 
     def process_url(self, api: str) -> str:
@@ -83,6 +92,7 @@ class GitlabAuth(AuthFlow):
         scopes: Optional[Sequence[str]] = None,
         provider_id: str = 'gitlab',
         url: str = 'https://gitlab.com',
+        tokens_storage: Optional[BaseStorage] = None,
     ):
         super().__init__(
             provider_id,
@@ -90,6 +100,7 @@ class GitlabAuth(AuthFlow):
             f'{url.rstrip("/")}/oauth/authorize',
             f'{url.rstrip("/")}/oauth/token',
             client_secret,
+            tokens_storage=tokens_storage,
         )
         self.url = url.rstrip("/")
 
@@ -101,6 +112,7 @@ class MastodonAuth(AuthFlow):
         client_id: str,
         client_secret: str,
         scopes: Optional[Sequence[str]] = None,
+        tokens_storage: Optional[BaseStorage] = None,
     ):
         super().__init__(
             'mastodon',
@@ -108,6 +120,7 @@ class MastodonAuth(AuthFlow):
             f'{server.rstrip("/")}/oauth2/authorize',
             f'{server.rstrip("/")}/oauth2/token',
             client_secret,
+            tokens_storage=tokens_storage,
         )
         self.server = server.rstrip('/')
 
@@ -121,6 +134,7 @@ class RedditAuth(AuthFlow):
         client_id: str,
         client_secret: str,
         scopes: Sequence[str],
+        tokens_storage: Optional[BaseStorage] = None,
     ):
         super().__init__(
             'reddit',
@@ -128,6 +142,7 @@ class RedditAuth(AuthFlow):
             'https://www.reddit.com/oauth2/authorize',
             'https://www.reddit.com/oauth2/access_token',
             client_secret,
+            tokens_storage=tokens_storage,
         )
 
     def process_url(self, api: str) -> str:
@@ -140,6 +155,7 @@ class FacebookAuth(AuthFlow):
         client_id: str,
         client_secret: str,
         scopes: Sequence[str],
+        tokens_storage: Optional[BaseStorage] = None,
     ):
         super().__init__(
             'facebook',
@@ -147,6 +163,7 @@ class FacebookAuth(AuthFlow):
             'https://www.facebook.com/dialog/oauth',
             'https://graph.facebook.com/oauth/access_token',
             client_secret,
+            tokens_storage=tokens_storage,
         )
 
 
@@ -156,6 +173,7 @@ class LinkedInAuth(AuthFlow):
         client_id: str,
         client_secret: str,
         scopes: Sequence[str],
+        tokens_storage: Optional[BaseStorage] = None,
     ):
         super().__init__(
             'linkedin',
@@ -163,4 +181,5 @@ class LinkedInAuth(AuthFlow):
             'https://www.linkedin.com/uas/oauth2/authorization',
             'https://www.linkedin.com/uas/oauth2/accessToken',
             client_secret,
+            tokens_storage=tokens_storage,
         )
