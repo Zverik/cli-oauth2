@@ -12,6 +12,7 @@ import webbrowser
 import string
 import wsgiref.simple_server
 import wsgiref.util
+import os
 import os.path
 import sys
 from base64 import urlsafe_b64encode
@@ -303,9 +304,8 @@ class AuthFlow:
         local_server.timeout = timeout_seconds
         local_server.handle_request()
 
-        # Note: using https here because oauthlib is very picky that
-        # OAuth 2.0 should only occur over https.
-        authorization_response = wsgi_app.last_request_uri.replace("http", "https")
+        # OAuth 2.0 should only occur over https, disable oauthlib security
+        os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = "true"
         self.fetch_token(
             authorization_response=authorization_response, audience=token_audience
         )
