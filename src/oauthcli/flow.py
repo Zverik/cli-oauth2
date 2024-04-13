@@ -28,7 +28,7 @@ class AuthFlow:
         auth_url: str,
         token_url: str,
         client_secret: Optional[str] = None,
-        tokens_storage: Optional[BaseStorage] = None,
+        storage: Optional[BaseStorage] = None,
     ):
         self.provider_id = provider_id
         self.session = session
@@ -38,8 +38,8 @@ class AuthFlow:
         self.token_url = token_url
         self.client_secret = client_secret
         self.default_local_host = 'localhost'
-        self.tokens_storage = tokens_storage if tokens_storage else ConfigFileStorage()
-        assert isinstance(self.tokens_storage, BaseStorage), "Invalid tokens storage provided"
+        self.storage = storage or ConfigFileStorage()
+        assert isinstance(self.storage, BaseStorage), "Invalid tokens storage provided"
         self._load_token()
 
     @property
@@ -81,14 +81,14 @@ class AuthFlow:
 
     def _load_token(self):
         if self.session.client_id:
-            token = self.tokens_storage.get_token(
+            token = self.storage.get_token(
                 self.provider_id, self.session.client_id
             )
             if token:
                 self.session.token = token
 
     def _save_token(self, token: Optional[dict]):
-        self.tokens_storage.set_token(self.provider_id, self.session.client_id, token)
+        self.storage.set_token(self.provider_id, self.session.client_id, token)
 
     def authorization_url(self, **kwargs):
         # ↓ this is google-specific
@@ -157,7 +157,7 @@ class AuthFlow:
         if self._check_auth(force, token_test):
             return self
 
-        self.session.redirect_uri = redirect_uri if redirect_uri else 'urn:ietf:wg:oauth:2.0:oob'
+        self.session.redirect_uri = redirect_uri or 'urn:ietf:wg:oauth:2.0:oob'
         auth_url, _ = self.authorization_url(**kwargs)
 
         if open_browser:

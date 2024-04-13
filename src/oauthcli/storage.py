@@ -42,9 +42,9 @@ class ConfigFileStorage(BaseStorage):
 
     def __init__(self, path: Optional[str] = None, config_name=None):
         self.path = (
-            path if path
-            else os.path.join(
-                platformdirs.user_config_dir(config_name if config_name else 'PythonCliAuth', ensure_exists=True),
+            path
+            or os.path.join(
+                platformdirs.user_config_dir(config_name or 'PythonCliAuth', ensure_exists=True),
                 'tokens.json'
             )
         )
