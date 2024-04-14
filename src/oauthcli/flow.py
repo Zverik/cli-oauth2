@@ -285,7 +285,7 @@ class AuthFlow:
         # OAuth 2.0 should only occur over https, disable oauthlib security
         os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = "true"
         self.fetch_token(
-            authorization_response=authorization_response, audience=token_audience
+            authorization_response=wsgi_app.last_request_uri, audience=token_audience
         )
 
         # This closes the socket
