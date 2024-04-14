@@ -183,3 +183,24 @@ class LinkedInAuth(AuthFlow):
             client_secret,
             storage=storage,
         )
+
+
+class ForgejoAuth(AuthFlow):
+    def __init__(
+        self,
+        server,
+        client_id: str,
+        client_secret: str,
+        scopes: Optional[Sequence[str]] = None,
+        provider_id: str = 'forgejo',
+        storage: Optional[BaseStorage] = None,
+    ):
+        super().__init__(
+            provider_id,
+            OAuth2Session(client_id, scope=scopes),
+            f'{server.rstrip("/")}/login/oauth/authorize',
+            f'{server.rstrip("/")}/login/oauth/access_token',
+            client_secret,
+            storage=storage,
+        )
+        self.server = server.rstrip("/")
