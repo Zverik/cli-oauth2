@@ -10,13 +10,15 @@ with parts of [google\_auth\_oauthlib](https://github.com/googleapis/google-auth
 
 ## Usage
 
-Do something like this:
+Before using OAuth2, you must obtain a Client ID and Client Secret by registering an application with the provider. For example, for OpenStreetMapAuth, register an application [here](https://www.openstreetmap.org/oauth2/applications). Important: set the redirect URI of the application to `http://127.0.0.1:8080/`.
+
+Then do something like this:
 
 ```python
 from oauthcli import OpenStreetMapAuth
 
 auth = OpenStreetMapAuth(
-    client_id, secret_id, ['read_prefs']
+    client_id, client_secret, ['read_prefs']
 ).auth_server(token_test=lambda r: r.get('user/details'))
 
 data = auth.get('user/details.json')
@@ -25,6 +27,7 @@ if data.status_code != 200:
 else:
     print(f'Hello, {data.json()["user"]["display_name"]}')
 ```
+
 
 Tokens are saved to disk, so subsequent runs won't require authorization.
 
