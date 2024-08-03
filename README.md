@@ -28,7 +28,6 @@ else:
     print(f'Hello, {data.json()["user"]["display_name"]}')
 ```
 
-
 Tokens are saved to disk, so subsequent runs won't require authorization.
 
 Auth objects have these methods and properties:
